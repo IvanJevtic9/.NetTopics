@@ -1,0 +1,38 @@
+
+src ->
+	Core ->
+		Application
+			- MediatR -> Commands IRequestHandler -> Queries IQueryHandler
+			- Pipeline behaviour
+			- Exceptions
+			- Abstractions
+		Domain	
+			- Abstractions -> IUnitOfWork, IRepository
+			- Entities
+			- Exceptions
+			- Primitives
+	External ->
+		Infrastructure
+			- Implementation of Repository, UnitOfWork
+			- Migrations
+			- DbContext
+		Presentation
+			- ApiControllers
+	docker-compose
+	Project.API
+		- Middelwares
+		- programs.cs class
+		- wwroot
+		- Views
+test -> 
+
+	Domain 
+	  |
+	  V
+	Application
+	  |
+	  V
+	Infrastructure | Presentation
+				|
+				V
+	App
