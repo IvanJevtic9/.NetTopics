@@ -36,3 +36,10 @@ test ->
 				|
 				V
 	App
+
+
+----------------------------
+
+Writing Architecture tests 
+
+NetArchTest.Rules

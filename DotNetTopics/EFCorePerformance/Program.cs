@@ -1,19 +1,32 @@
 using Dapper;
-using EFCorePerformance;
-using EFCorePerformance.Entities;
-using EFCorePerformance.MediatR.Commands;
 using MediatR;
+using EFCorePerformance;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Linq;
-using System.Reflection;
+using EFCorePerformance.Entities;
+using EFCorePerformance.MediatR.Commands;
+using EFCorePerformance.Options;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDbContext<DatabaseContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.ConfigureOptions<DatabaseOptionsSetup>();
+builder.Services.AddDbContext<DatabaseContext>((serviceProvider, options) =>
+{
+    var databaseOptions = serviceProvider.GetRequiredService<IOptions<DatabaseOptions>>()!.Value; // Throw exception !.
+
+    options.UseSqlServer(databaseOptions.ConnectionString, sqlServerAction =>
+    {
+        sqlServerAction.CommandTimeout(databaseOptions.CommandTimeout);
+        sqlServerAction.EnableRetryOnFailure(databaseOptions.MaxRetryCount);
+    });
+
+    options.EnableDetailedErrors(databaseOptions.EnableDetailedErrors);
+    options.EnableSensitiveDataLogging(databaseOptions.EnableSensitiveDataLogging);
+});
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 // Configure pipeline

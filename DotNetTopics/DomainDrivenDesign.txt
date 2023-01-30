@@ -1,0 +1,68 @@
+﻿- Commands / Queries -> sealed record types.
+
+Domain:
+----------------
+
+- Entiteti koji se nalaze u Domain se kreiraju iskljucivo preko konstruktora ili nekog factory static metode.
+- Ako imamo neke kalkulacije vezane za sam entitet potrebne za kreiranje entiteta, opcija je da se kreira static factory metod.
+  Konstruktor ce biti private onda da ne bi rusili domain driven design, jer ce se obicno pozivati u factory metodi.
+  Takodje Polja ce biti PRIVATE set.
+
+- Takodje ako ako je neki deo domena logicki pripada drugom , onda takodje u okviru tog modela mozemo sacuvati logiku za kreiranje drugog.
+- U tom slucaju konstruktor drugog entiteta mora biti internal. Kako bi konstruktor mogao da se koristi samo u okviru Domain projekta.
+
+- Potrebno je takodje enkapsulirati sav pristup kolekcijama.
+
+	List -> IReadOnlyCollection u okviru entiteta
+
+ Ovo ce spreciti dodavanje i brisanje iz liste, da bi ipak mogli da dodamo tamo gde zelimo
+ Dodacemo private readonly List<Tip> _kolekcija tako da unutar naseg entiteta mozemo da radimo na istim.
+
+Validation of Domain:
+-----------------------------
+
+1. Throwing exception
+
+	- Kada je domain rule broken , izbacujemo exception. (To moze biti custom exception za svaki exception rule)
+	- Druga opcija je koriscenje Result opcije koja se ponasa kao wrapper. U slucaju da nesto pukne nece se bacati exception vec ce se ta greska vrapovati
+		i vratiti kao result instanca gde je IsFailure setovan na true , tako da znamo da posle sam Error model mozemo da izvucemo i procitamo.
+
+		Greske takodje mogu da se skladiste kao DomainErrors (static) tako da ne moramo da ih konstruisemo u kodu kad se dese (vise mesta u app)
+
+Primitive Types (Primitive obsession):
+-----------------------------------------
+
+Primitive Obsession is a code smell in software development where a programmer uses primitive data types (e.g. integers, strings, booleans)
+to represent domain-specific concepts. This leads to an abundance of low-level code that is difficult to understand and maintain.
+It can also result in bugs and inconsistencies in the codebase.
+
+The solution to Primitive Obsession is to create domain-specific classes or value objects that encapsulate related data and behavior,
+making the code more readable, maintainable, and expressive. By using these custom objects, the code becomes more abstract and less focused on low-level
+implementation details, which makes it easier to understand and modify.
+
+** Example **
+For example, instead of using a string to represent an email address, you could create a custom "Email" class that validates the format and provides useful
+methods for working with email addresses. This makes the code more expressive and helps prevent bugs caused by incorrect data.
+
+U DDD Value type je tip koji je definisan samo po svojim vrednostima. Ako dva value objekta imaju istu vrednost, oni ce se smatrati jednakim.
+Oni su Immutable po dizajnu (nepromenljivi)
+
+Aggregate Root Pattern:
+------------------------
+
+"Aggregate Root" obrazac je softverski dizajn obrazac korišćen u Domain-Driven Design (DDD).
+On pruža način za strukturiranje domenskog modela tako što grupiše povezane podatke i ponašanje u jedinicu nazvanu agregat.
+
+Agregat je skup domenskih objekata koji se može tretirati kao jedina jedinica u smislu promena podataka.
+Aggregate root je korena entiet u agregatu i igra ulogu čuvara vrata, dozvoljavajući ili odbijajući promene u agregatu kao celini.
+Sve promene u agregatu se vrše preko aggregate root-a, a aggregate root osigurava konzistentnost agregata tako što obezbeđuje da se promene
+na njegovim objektima podčinjenih izvrše u validnom stanju.
+
+Svrha Aggregate Root obrasca je smanjivanje kompleksnosti domenskog modela tako što stvara jasnu separaciju odgovornosti između agregata
+i njegovih objekata podčinjenih. To olakšava razumevanje ponašanja i stanja agregata i izolaciju promena u agregatu od promena na objektima podčinjenih.
+
+Ukratko, Aggregate Root obrazac pruža način za upravljanje konzistentnošću i primenu poslovnih pravila u kompleksnim domenima tako što grupiše
+povezane podatke i ponašanje u jednu jedinicu i kontroliše pristup agregatu preko naznačenog aggregate root-a.
+
+Za konkretan primer, user, company spadaju pod Account koji je aggregate root sto takodje znaci da nesmemo da imamo metode
+za dovlacenje User-a ili Company-ja iz razloga sto te informacije idu kao celina sa samim akauntom , i ne zelimo da tome pristupamo.
