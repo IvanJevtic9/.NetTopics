@@ -66,3 +66,10 @@ povezane podatke i ponašanje u jednu jedinicu i kontroliše pristup agregatu pr
 
 Za konkretan primer, user, company spadaju pod Account koji je aggregate root sto takodje znaci da nesmemo da imamo metode
 za dovlacenje User-a ili Company-ja iz razloga sto te informacije idu kao celina sa samim akauntom , i ne zelimo da tome pristupamo.
+
+Domain Events:
+----------------------------
+
+Kada zelimo da neku logiku prebacimo iz nasih command handlera ali da i dalje zadrzimo isto ponasanje.
+Domain Events se nalaze u okviru aggregate root-a. Kada sacuvamo neke izmene u okviru jednog aggregate root-a event ce se registrovati u bazi.
+Tako da ce ga neki background job pokupiti rais-ovati. (Outbox pattern)
