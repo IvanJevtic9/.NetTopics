@@ -11,3 +11,4 @@ var (name, dateOfBirth) = person; // name = Ivan Jevtic dateOfBirth = 10/16/1995
 
 Console.WriteLine(person); // Person { FullName = Ivan Jevtic, DateOfBirth = 10/16/1995 }
 Console.WriteLine(person == person2); // False
+

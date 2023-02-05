@@ -73,3 +73,11 @@ Domain Events:
 Kada zelimo da neku logiku prebacimo iz nasih command handlera ali da i dalje zadrzimo isto ponasanje.
 Domain Events se nalaze u okviru aggregate root-a. Kada sacuvamo neke izmene u okviru jednog aggregate root-a event ce se registrovati u bazi.
 Tako da ce ga neki background job pokupiti rais-ovati. (Outbox pattern)
+
+Transaction Outbox pattern 
+---------------------------
+
+Outbox pattern je koristan kada ocemo da garantujemo da se nasa transakcija kompletirati na automic nacin. Unutar transakcije generisemo jednu ili vise outbox poruka i cuvamo ih u outbox.
+Kasnije procesuiramo outbox poruke jedan po jedan tako da ih obradjuje njihovi namenjeni konzumer.
+
+Database interceptors EF to save something
