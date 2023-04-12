@@ -81,3 +81,25 @@ Outbox pattern je koristan kada ocemo da garantujemo da se nasa transakcija komp
 Kasnije procesuiramo outbox poruke jedan po jedan tako da ih obradjuje njihovi namenjeni konzumer.
 
 Database interceptors EF to save something
+
+Handle duplicate messages
+-----------------------------
+
+Implementing IdempotentDomainEventHandler
+ideja je da imamo tabelu outboxMessageConsumer gde ce se pamtiti Id od poruke ,pa ako se neki event domain message ponovo desi , nece se proslediti handleru (decorator)
+
+Implementing CachedRepository (dekorator)
+
+Koriscenjem IMemoryCache , koji poziva Repositori ako se u InDataMemory ne nalazi kesovan rezultat. takodje imamo opcije za ExparationTime
+
+memoryCache.GetOrCreateAsync(
+	key,
+	entry => {
+		entry.SetAbsoluteExparation(TimeSpan.FromMinutes(2));
+
+		return //poziv kad repositoriju ukoliko nemamo kesovan
+	});
+
+	builder.Services.AddScope<IRepository, Repository>()
+	// Scrutor
+	builder.Services.Decorate<Repository, ICachedRepository>
